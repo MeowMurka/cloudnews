@@ -7,10 +7,16 @@
 <form method="post" action="/rent" class="card">
 <h3>Арендовать слот</h3>
 <label>Слот
-<select name="slot_id" required>
-<% slots.forEach(s => { %>
-<option value="<%= s.id %>"><%= s.code %> — <%= s.width %>x<%= s.height %> — <%= s.price %> ₽</option>
-<% }) %>
+<select name="slot_id" id="slotSelect" required>
+  <% slots.forEach(s => { %>
+    <option
+      value="<%= s.id %>"
+      data-w="<%= s.width %>"
+      data-h="<%= s.height %>"
+      data-price="<%= s.price %>">
+      <%= s.code %> — <%= s.width %>x<%= s.height %> — <%= s.price %>₸
+    </option>
+  <% }) %>
 </select>
 </label>
 <label>Заголовок <input name="title" required /></label>
@@ -18,3 +24,80 @@
 <label>Изображение (URL) <input name="image_url" /></label>
 <button>Арендовать на 24 часа</button>
 </form>
+<hr />
+
+<h3>Предпросмотр</h3>
+<div id="preview" style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap">
+  <div>
+    <div id="previewFrame"
+         style="
+           position:relative;
+           width: 360px;             /* базовая ширина превью */
+           height: 240px;            /* пересчитаем по соотношению через JS */
+           border-radius:10px;
+           overflow:hidden;
+           background:#121417;
+           border:1px solid #20242a;
+         ">
+      <div class="media" style="position:absolute; inset:0;">
+        <img id="previewImg" src="" alt="" style="width:100%; height:100%; object-fit:cover; display:none;">
+      </div>
+      <div class="shade" style="position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0) 60%);"></div>
+      <div class="overlay" style="position:absolute; left:10px; right:10px; bottom:10px; color:#e7eaee;">
+        <h4 id="previewTitle" style="margin:0 0 4px; font-size:16px; font-weight:700;">Здесь может быть ваша реклама</h4>
+        <p id="previewBody" style="margin:0; font-size:13px; opacity:.9;">Введите заголовок и текст</p>
+      </div>
+    </div>
+    <div id="slotHint" style="font-size:12px; color:#888; margin-top:6px;"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const sel = document.getElementById('slotSelect');
+  const title = document.querySelector('input[name="title"]') || document.getElementById('title');
+  const body = document.querySelector('textarea[name="body"]') || document.getElementById('body');
+  const img = document.querySelector('input[name="image_url"]') || document.getElementById('image_url');
+
+  const frame = document.getElementById('previewFrame');
+  const pTitle = document.getElementById('previewTitle');
+  const pBody = document.getElementById('previewBody');
+  const pImg = document.getElementById('previewImg');
+  const hint = document.getElementById('slotHint');
+
+  function updateFrameSize() {
+    const opt = sel.options[sel.selectedIndex];
+    const w = Number(opt.dataset.w || 1);
+    const h = Number(opt.dataset.h || 1);
+    // базовая ширина превью
+    const baseW = 360;
+    const ratio = h / w;
+    frame.style.width  = baseW + 'px';
+    frame.style.height = Math.max(160, Math.round(baseW * ratio)) + 'px';
+    hint.textContent = `Слот: ${opt.textContent}`;
+  }
+
+  function updateContent() {
+    pTitle.textContent = (title && title.value.trim()) || 'Здесь может быть ваша реклама';
+    pBody.textContent  = (body && body.value.trim())  || 'Введите заголовок и текст';
+
+    const url = (img && img.value.trim()) || '';
+    if (url) {
+      pImg.src = url;
+      pImg.style.display = 'block';
+    } else {
+      pImg.removeAttribute('src');
+      pImg.style.display = 'none';
+    }
+  }
+
+  sel && sel.addEventListener('change', () => { updateFrameSize(); });
+  title && title.addEventListener('input', updateContent);
+  body && body.addEventListener('input', updateContent);
+  img && img.addEventListener('input', updateContent);
+
+  // init
+  updateFrameSize();
+  updateContent();
+})();
+</script>

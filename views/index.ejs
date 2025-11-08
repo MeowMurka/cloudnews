@@ -1,19 +1,24 @@
-<div class="grid">
-<% slots.forEach(slot => { %>
-<% const p = placements.get(slot.id); %>
-<div class="cell span-w-<%= slot.width %> span-h-<%= slot.height %>">
-<% if (p) { %>
-<div class="ad">
-<h3><%= p.title %></h3>
-<p><%= p.body %></p>
-<% if (p.image_url) { %>
-<img src="<%= p.image_url %>" alt="" />
-<% } %>
-<div class="expires">до <%= new Date(p.expires_at).toLocaleString('ru-RU') %></div>
-</div>
-<% } else { %>
-<div class="placeholder">Здесь может быть ваша реклама<br/><small>Слот <%= slot.code %></small></div>
-<% } %>
-</div>
-<% }) %>
+<div class="cell" style="grid-column: span <%= slot.width %>; grid-row: span <%= slot.height %>">
+  <% const p = placements.get(slot.id); %>
+
+  <% if (p && p.image_url) { %>
+    <div class="media">
+      <img src="<%= p.image_url %>" alt="">
+    </div>
+    <div class="shade"></div>
+    <div class="overlay">
+      <h3 class="title"><%= p.title %></h3>
+      <p class="body"><%= p.body %></p>
+    </div>
+  <% } else if (p) { %>
+    <div class="no-media">
+      <h3 class="title"><%= p.title %></h3>
+      <p class="body"><%= p.body %></p>
+    </div>
+  <% } else { %>
+    <div class="no-media">
+      <h3 class="title">Здесь может быть ваша реклама</h3>
+      <p class="body">Свободный блок: <%= slot.code %></p>
+    </div>
+  <% } %>
 </div>

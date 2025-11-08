@@ -17,3 +17,79 @@ input, textarea, select { background:#0e1116; color:var(--fg); border:1px solid 
 button { cursor:pointer; }
 .span-w-1 { grid-column: span 1; } .span-w-2 { grid-column: span 2; } .span-w-3 { grid-column: span 3; } .span-w-4 { grid-column: span 4; } .span-w-5 { grid-column: span 5; } .span-w-6 { grid-column: span 6; }
 .span-h-1 { grid-row: span 1; }    .span-h-2 { grid-row: span 2; }    .span-h-3 { grid-row: span 3; }    .span-h-4 { grid-row: span 4; }    .span-h-5 { grid-row: span 5; }    .span-h-6 { grid-row: span 6; }
+/* --- CloudNews: blocks fix & media fit --- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+}
+
+/* каждая ячейка-слот */
+.cell {
+  position: relative;
+  overflow: hidden;              /* не даём контенту “вылезать” */
+  border-radius: 10px;
+  background: #121417;
+  border: 1px solid #20242a;
+  color: #e7eaee;
+}
+
+/* медиа-область под картинку, по умолчанию занимает всю ячейку */
+.cell .media {
+  position: absolute;
+  inset: 0;
+}
+
+/* сама картинка: всегда заполняет блок, не искажаясь */
+.cell .media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;             /* ВАЖНО: картинка заполняет, без искажений */
+}
+
+/* затемняем низ для читаемости текста */
+.cell .shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0) 60%);
+}
+
+/* текстовая часть поверх */
+.cell .overlay {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+}
+
+/* заголовок и текст с усечением, если места мало */
+.cell .title {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.2;
+  margin: 0 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;         /* максимум 2 строки */
+  -webkit-box-orient: vertical;
+}
+
+.cell .body {
+  font-size: 13px;
+  line-height: 1.25;
+  opacity: .9;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;         /* максимум 3 строки */
+  -webkit-box-orient: vertical;
+}
+
+/* для ячеек без картинки — даём паддинги и норм фон */
+.cell.no-media {
+  padding: 12px;
+}
