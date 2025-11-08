@@ -3,6 +3,8 @@ import { pages } from "./routes/pages.js";
 import { rent } from "./routes/rent.js";
 import { startCron } from "./cron.js";
 import { registerUser, loginUser } from "./auth.js";
+import { fileURLToPath } from 'url';
+
 
 
 const __filename = fileURLToPath(import.meta.url);
