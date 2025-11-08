@@ -13,39 +13,32 @@ import { httpRequestDuration, metricsHandler } from "./metrics.js";
 const app = express();
 const port = process.env.PORT || 3000;
 
-// EJS + лэйауты
+// View engine + layouts
 app.set("view engine", "ejs");
 app.set("views", "./views");
 app.use(expressLayouts);
-app.set("layout", "layout"); // views/layout.ejs
-app.use(expressLayouts);
 app.set("layout", "layout");
 
-// ✅ пробрасываем userId и дефолтный title во все шаблоны
-app.use((req, res, next) => {
-  res.locals.userId = req.session?.userId || null;
-  if (!res.locals.title) res.locals.title = "CloudNews";
-  next();
-});
-
-
-// ✅ дефолтный title на случай, если забыли передать из роута
-app.use((req, res, next) => {
-  if (!res.locals.title) res.locals.title = "CloudNews";
-  next();
-});
-
+// Базовые мидлвары
 app.use(express.static("./public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
 
+// Сессии — ДОЛЖНЫ стоять до мидлвара с res.locals
 app.use(session({
   secret: process.env.SESSION_SECRET || "changeme",
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false }
+  cookie: { secure: false } // на HTTPS можно true + proxy
 }));
+
+// Пробросим безопасные переменные во все шаблоны
+app.use((req, res, next) => {
+  res.locals.userId = req.session?.userId || null;
+  res.locals.title = res.locals.title || "CloudNews";
+  next();
+});
 
 // Метрики мидлвар
 app.use((req, res, next) => {
