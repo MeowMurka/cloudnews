@@ -19,6 +19,12 @@ app.set("views", "./views");
 app.use(expressLayouts);
 app.set("layout", "layout"); // views/layout.ejs
 
+// ✅ дефолтный title на случай, если забыли передать из роута
+app.use((req, res, next) => {
+  if (!res.locals.title) res.locals.title = "CloudNews";
+  next();
+});
+
 app.use(express.static("./public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
