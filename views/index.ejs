@@ -1,0 +1,20 @@
+<% layout('layout', { title: 'Главная' }) %>
+<div class="grid">
+<% slots.forEach(slot => { %>
+<% const p = placements.get(slot.id); %>
+<div class="cell span-w-<%= slot.width %> span-h-<%= slot.height %>">
+<% if (p) { %>
+<div class="ad">
+<h3><%= p.title %></h3>
+<p><%= p.body %></p>
+<% if (p.image_url) { %>
+<img src="<%= p.image_url %>" alt="" />
+<% } %>
+<div class="expires">до <%= new Date(p.expires_at).toLocaleString('ru-RU') %></div>
+</div>
+<% } else { %>
+<div class="placeholder">Здесь может быть ваша реклама<br/><small>Слот <%= slot.code %></small></div>
+<% } %>
+</div>
+<% }) %>
+</div>

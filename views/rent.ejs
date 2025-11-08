@@ -1,0 +1,21 @@
+<% layout('layout', { title: 'Аренда' }) %>
+<div class="card">
+<h2>Баланс: <%= balance %> ₽</h2>
+<p>Чтобы пополнить: переведите по реквизитам, админ обновит баланс в БД.</p>
+</div>
+
+
+<form method="post" action="/rent" class="card">
+<h3>Арендовать слот</h3>
+<label>Слот
+<select name="slot_id" required>
+<% slots.forEach(s => { %>
+<option value="<%= s.id %>"><%= s.code %> — <%= s.width %>x<%= s.height %> — <%= s.price %> ₽</option>
+<% }) %>
+</select>
+</label>
+<label>Заголовок <input name="title" required /></label>
+<label>Текст <textarea name="body" required></textarea></label>
+<label>Изображение (URL) <input name="image_url" /></label>
+<button>Арендовать на 24 часа</button>
+</form>
