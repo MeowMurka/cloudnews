@@ -1,24 +1,29 @@
-<div class="cell" style="grid-column: span <%= slot.width %>; grid-row: span <%= slot.height %>">
-  <% const p = placements.get(slot.id); %>
+<div class="grid">
+  <% (slots || []).forEach(function (slot) { 
+       const p = placements && placements.get ? placements.get(slot.id) : (placements && placements[slot.id]); %>
 
-  <% if (p && p.image_url) { %>
-    <div class="media">
-      <img src="<%= p.image_url %>" alt="">
+    <div class="cell" style="grid-column: span <%= slot.width %>; grid-row: span <%= slot.height %>">
+      <% if (p && p.image_url) { %>
+        <div class="media">
+          <img src="<%= p.image_url %>" alt="">
+        </div>
+        <div class="shade"></div>
+        <div class="overlay">
+          <h3 class="title"><%= p.title %></h3>
+          <p class="body"><%= p.body %></p>
+        </div>
+      <% } else if (p) { %>
+        <div class="no-media">
+          <h3 class="title"><%= p.title %></h3>
+          <p class="body"><%= p.body %></p>
+        </div>
+      <% } else { %>
+        <div class="no-media">
+          <h3 class="title">Здесь может быть ваша реклама</h3>
+          <p class="body">Свободный блок: <%= slot.code %></p>
+        </div>
+      <% } %>
     </div>
-    <div class="shade"></div>
-    <div class="overlay">
-      <h3 class="title"><%= p.title %></h3>
-      <p class="body"><%= p.body %></p>
-    </div>
-  <% } else if (p) { %>
-    <div class="no-media">
-      <h3 class="title"><%= p.title %></h3>
-      <p class="body"><%= p.body %></p>
-    </div>
-  <% } else { %>
-    <div class="no-media">
-      <h3 class="title">Здесь может быть ваша реклама</h3>
-      <p class="body">Свободный блок: <%= slot.code %></p>
-    </div>
-  <% } %>
+
+  <% }); %>
 </div>
