@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import expressLayouts from "express-ejs-layouts";
 
 import { pages } from "./routes/pages.js";
 import { rent } from "./routes/rent.js";
@@ -12,11 +13,13 @@ import { httpRequestDuration, metricsHandler } from "./metrics.js";
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Вьюхи и статика — без __dirname/path, Render запускает из корня проекта
+// EJS + лэйауты
 app.set("view engine", "ejs");
 app.set("views", "./views");
-app.use(express.static("./public"));
+app.use(expressLayouts);
+app.set("layout", "layout"); // views/layout.ejs
 
+app.use(express.static("./public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
@@ -38,7 +41,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Аутентификация (простые формы)
+// Регистрация / Логин
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -66,7 +69,7 @@ app.get("/metrics", metricsHandler);
 app.use(pages);
 app.use(rent);
 
-// Крон деактивации размещений
+// Крон
 startCron();
 
 app.listen(port, () => console.log(`CloudNews listening on ${port}`));
