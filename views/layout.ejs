@@ -10,7 +10,7 @@
 <header class="topbar">
 <a href="/" class="brand">CloudNews</a>
 <nav>
-<% if (userId) { %>
+<% if (typeof userId !== 'undefined' && userId) { %>
 <a href="/rent">Арендовать</a>
 <form action="/logout" method="post" style="display:inline"><button>Выйти</button></form>
 <% } else { %>

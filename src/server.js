@@ -18,6 +18,16 @@ app.set("view engine", "ejs");
 app.set("views", "./views");
 app.use(expressLayouts);
 app.set("layout", "layout"); // views/layout.ejs
+app.use(expressLayouts);
+app.set("layout", "layout");
+
+// ✅ пробрасываем userId и дефолтный title во все шаблоны
+app.use((req, res, next) => {
+  res.locals.userId = req.session?.userId || null;
+  if (!res.locals.title) res.locals.title = "CloudNews";
+  next();
+});
+
 
 // ✅ дефолтный title на случай, если забыли передать из роута
 app.use((req, res, next) => {
